@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1")
 public class TrackController {
+// Component should be in controller package only
 
 //RestController is responsible for returning data by directly writing into http response as json
 
@@ -125,17 +126,17 @@ public class TrackController {
     }
 
 
-    @Bean
-    public CommandLineRunner loadData(TrackRepository repository) {
-        return (args) -> {
-            // save a couple of customers
-            repository.save(new Track(1, "Jack", "Bauer"));
-            repository.save(new Track(2, "Chloe", "O'Brian"));
-            repository.save(new Track(3, "Kim", "Bauer"));
-            repository.save(new Track(4, "David", "Palmer"));
-            repository.save(new Track(5, "Michelle", "Dessler"));
-        };
-
-
-    }
+//    @Bean
+//    public CommandLineRunner loadData(TrackRepository repository) {
+//        return (args) -> {
+//            // save a couple of customers
+//            repository.save(new Track(1, "Jack", "Bauer"));
+//            repository.save(new Track(2, "Chloe", "O'Brian"));
+//            repository.save(new Track(3, "Kim", "Bauer"));
+//            repository.save(new Track(4, "David", "Palmer"));
+//            repository.save(new Track(5, "Michelle", "Dessler"));
+//        };
+//
+//
+//    }
 }

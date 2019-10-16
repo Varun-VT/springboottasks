@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebConfiguration {
 //  Configuration Code
+
+//    Configuration is used as a replacement of beans.xml
+
 // This code creates a spring bean with name ServletRegistrationBean. In that bean we added
 // a URL mapping to "/console/*" for our h2 console. This is all we need to do. When we
 // run our spring boot application we'll now be able to access database console.
