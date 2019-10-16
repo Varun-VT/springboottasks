@@ -12,7 +12,8 @@ import java.util.List;
 public interface TrackRepository extends JpaRepository<Track, Integer> {
 // JpaRepository<User, Integer>- 1st para is domain entity, 2nd- identifier of domain entity i.e int id;
 // We haven't written any implementation for repository as implementation will be provided to us at runtime
-//
 
+    @Query(value = "FROM Track WHERE TRACK_NAME= ?1")
+    public List<Track> gettrackByName(String trackName);
 
 }

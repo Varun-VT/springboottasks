@@ -1,13 +1,15 @@
 package com.stackroute.controller;
 
 import com.stackroute.domain.Track;
+import com.stackroute.exceptions.TrackAlreadyExistsException;
+import com.stackroute.exceptions.TrackNotFoundException;
 import com.stackroute.repository.TrackRepository;
 import com.stackroute.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,7 @@ public class TrackController {
         this.trackService= trackService;
     }
 
+
     @PostMapping("/track")   /*user is resource name. This is feature of http REST level 1 where we
        perform operations like GET, POST, DELETE on resources. In our case the resource is a user*/
 
@@ -41,7 +44,7 @@ public class TrackController {
             responseEntity= new ResponseEntity<String>("Successfully created", HttpStatus.CREATED);
 // 1st para is string message to be sent back as response, 2nd para is http status code
         }
-        catch (Exception e) {
+        catch (TrackAlreadyExistsException e) {
 //  If the saveUser fails, we create a responseEntity representing the exception message and a corresponding
 //     status code.
             responseEntity= new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
@@ -65,11 +68,11 @@ public class TrackController {
     return responseEntity;
     }
 
-    @DeleteMapping("/track/{trackId}")
-    public ResponseEntity<?> deleteTrack(@PathVariable("trackId") int trackId) {
+    @GetMapping("/track/{trackname}")
+    public ResponseEntity<?> getTrackByName(){
+//  This handler method is to retrieve all users.
         ResponseEntity responseEntity;
         try {
-            trackService.deleteTrack(trackId);
             responseEntity= new ResponseEntity<List<Track>>(trackService.getAllTracks(), HttpStatus.OK);
 //   Here we've intensionally skipped exception handling part.
         }
@@ -78,6 +81,22 @@ public class TrackController {
         }
         return responseEntity;
     }
+
+    @DeleteMapping("/track/{trackId}")
+    public ResponseEntity<?> deleteTrack(@PathVariable("trackId") int trackId) {
+        ResponseEntity responseEntity;
+        try {
+            trackService.deleteTrack(trackId);
+            responseEntity= new ResponseEntity<List<Track>>(trackService.getAllTracks(), HttpStatus.OK);
+//   Here we've intensionally skipped exception handling part.
+        }
+        catch (TrackNotFoundException e){
+            responseEntity= new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+
+        return responseEntity;
+    }
+
     @DeleteMapping("/track/deletealltracks")
     public ResponseEntity<?> deleteAllTracks() {
         ResponseEntity responseEntity;
@@ -98,13 +117,25 @@ public class TrackController {
         try {
         trackService.updateTrack(track, trackId);
         responseEntity= new ResponseEntity<List<Track>>(trackService.getAllTracks(), HttpStatus.OK);
-
         }
-    catch (Exception e){
+    catch (TrackNotFoundException e){
         responseEntity= new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
-
     }
         return responseEntity;
     }
 
+
+    @Bean
+    public CommandLineRunner loadData(TrackRepository repository) {
+        return (args) -> {
+            // save a couple of customers
+            repository.save(new Track(1, "Jack", "Bauer"));
+            repository.save(new Track(2, "Chloe", "O'Brian"));
+            repository.save(new Track(3, "Kim", "Bauer"));
+            repository.save(new Track(4, "David", "Palmer"));
+            repository.save(new Track(5, "Michelle", "Dessler"));
+        };
+
+
+    }
 }

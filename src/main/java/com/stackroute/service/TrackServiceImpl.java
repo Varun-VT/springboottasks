@@ -1,6 +1,8 @@
 package com.stackroute.service;
 
 import com.stackroute.domain.Track;
+import com.stackroute.exceptions.TrackAlreadyExistsException;
+import com.stackroute.exceptions.TrackNotFoundException;
 import com.stackroute.repository.TrackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,16 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public Track saveTrack(Track track) {
+    public Track saveTrack(Track track) throws TrackAlreadyExistsException {
 // The save method comes from jpa repository inteface that our userRepository interface extends.
 // Also, the actual implementation of save method'll be provided at runtime
+        if (trackRepository.existsById(track.getTrackId())){
+            throw new TrackAlreadyExistsException("Track Already exists");
+        }
         Track savedTrack = trackRepository.save(track);
+        if (savedTrack == null){
+            throw new TrackAlreadyExistsException("Track Already exists");
+        }
         return savedTrack;
     }
 
@@ -32,15 +40,24 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public List<Track> deleteTrack(int trackId) {
-        trackRepository.deleteById(trackId);
-        return trackRepository.findAll();
-       /* for (Track track: trackRepository.findAll()) {
-            if (track.getTrackId()== trackId){
-                trackRepository.findAll().remove(track);
-                System.out.println("You've deleted something");
-            }*/
+    public List<Track> getTrackByName(String trackName) throws TrackNotFoundException {
+       if (trackRepository.gettrackByName(trackName) != null){
+           return (List<Track>)trackRepository.gettrackByName(trackName);
+       }
+       else {
+           throw new TrackNotFoundException("Track not found Exception");
+       }
+    }
 
+    @Override
+    public List<Track> deleteTrack(int trackId) throws TrackNotFoundException {
+        if (trackRepository.existsById(trackId)) {
+            trackRepository.deleteById(trackId);
+            return trackRepository.findAll();
+        }
+        else {
+            throw new TrackNotFoundException("Track not found Exception");
+        }
     }
 
     @Override
@@ -50,13 +67,16 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public List<Track> updateTrack(Track track, int trackId) {
+    public List<Track> updateTrack(Track track, int trackId) throws TrackNotFoundException {
         if (trackRepository.existsById(trackId)) {
             for (Track trck : trackRepository.findAll()) {
                 if (trck.getTrackId() == trackId) {
                     trck.setComments(track.getComments());
                 }
             }
+        }
+        else {
+            throw new TrackNotFoundException("Track not found Exception");
         }
         return trackRepository.findAll();
     }
