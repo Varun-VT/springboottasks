@@ -5,7 +5,7 @@ import org.hibernate.annotations.NamedQuery;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
+@Entity // This tells Hibernate to make a table out of this class
 public class Track {
 
     @Id

@@ -6,8 +6,10 @@ import com.stackroute.exceptions.TrackNotFoundException;
 import com.stackroute.repository.TrackRepository;
 import com.stackroute.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ public class TrackController {
 //RestController is responsible for returning data by directly writing into http response as json
 
 //At class level we provide RequestMapping to provide a std path "api/v1"
+    // @ResponseBody means the returned String is the response, not a view name
+    // @RequestParam means it is a parameter from the GET or POST request
     TrackService trackService;
 
     @Autowired
@@ -126,17 +130,17 @@ public class TrackController {
     }
 
 
-//    @Bean
-//    public CommandLineRunner loadData(TrackRepository repository) {
-//        return (args) -> {
-//            // save a couple of customers
-//            repository.save(new Track(1, "Jack", "Bauer"));
-//            repository.save(new Track(2, "Chloe", "O'Brian"));
-//            repository.save(new Track(3, "Kim", "Bauer"));
-//            repository.save(new Track(4, "David", "Palmer"));
-//            repository.save(new Track(5, "Michelle", "Dessler"));
-//        };
-//
-//
-//    }
+    @Bean
+    public CommandLineRunner loadData(TrackRepository repository) {
+        return (args) -> {
+            // save a couple of customers
+            repository.save(new Track(1, "Jack", "Bauer"));
+            repository.save(new Track(2, "Chloe", "O'Brian"));
+            repository.save(new Track(3, "Kim", "Bauer"));
+            repository.save(new Track(4, "David", "Palmer"));
+            repository.save(new Track(5, "Michelle", "Dessler"));
+        };
+
+
+    }
 }
